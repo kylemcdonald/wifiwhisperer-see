@@ -4,11 +4,14 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "forever start --uid \"app\" -a -c nodemon app.js --watch .env --exitcrash",
+    "stop": "forever stop app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Kyle McDonald",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^2.0.0",
     "express": "^4.12.4"
   }
 }
