@@ -16,7 +16,9 @@
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+
         <script src="js/lodash.min.js"></script>
+        <script src="js/jquery-3.1.1.min.js"></script>
         <script src="js/tts.js"></script>
     </head>
     <body id="defaultindex_page">
@@ -54,8 +56,8 @@
 
         <div class="leaky-header main-sizer text-center">
           <h2>Your data tells a story.</h2>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/President_Barack_Obama.jpg/440px-President_Barack_Obama.jpg" onclick="speak()"/>
-          <p>A man in a suit and tie.</p>
+          <img id="cur-url" src="" onclick="load()"/>
+          <p id="cur-text"></p>
         </div>
 
     </div>
