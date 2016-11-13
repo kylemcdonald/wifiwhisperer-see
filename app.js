@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 
 app.get('/', function (req, res) {
-	res.send("process.env.MESSAGE: " + process.env.MESSAGE);
+	res.send("Testing push: " + process.env.MESSAGE);
 });
 
 var server = app.listen(process.env.PORT || 3000, function () {
