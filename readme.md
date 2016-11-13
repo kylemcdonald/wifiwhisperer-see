@@ -19,14 +19,13 @@ $ pod
 $ pod remote wifiwhisperer https://github.com/kylemcdonald/wifiwhisperer-see.git
 ```
 
-Set up ssh:
+Start the pod web service with `pod web`. Then add your server to the GitHub hooks following the instructions [here](https://github.com/yyx990803/pod/wiki/Using-a-remote-repo).
+
+If you're developing on the server, you want to set up ssh access to GitHub.
 
 ```
 $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 $ cat ~/.ssh/id_rsa.pub
 ```
 
-Add the ssh key to your GitHub account.
-
-Start the pod web service with `pod web`. Then add your server to the GitHub hooks following the instructions [here](https://github.com/yyx990803/pod/wiki/Using-a-remote-repo).
-
+And add the ssh key to your GitHub account.
