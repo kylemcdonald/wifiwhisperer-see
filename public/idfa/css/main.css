@@ -105,7 +105,7 @@ section#leaky-data > div.listening-shoutbox .rgt{ position: absolute; right: 0px
 
 
 section#leaky-data .leaky-info-collection{ width: 100%; }
-section#leaky-data .leaky-info-collection .leaky-item{ position: relative; display: none; visibility: hidden; overflow: hidden; margin: 10px 0; width: 100%;  }
+section#leaky-data .leaky-info-collection .leaky-item{ position: relative; overflow: hidden; margin: 10px 0; width: 100%;  }
 section#leaky-data .leaky-info-collection .leaky-item .close-box{ cursor: pointer; position: absolute; z-index: 600; right: 4px; bottom: 4px; width: 50px; height: 22px; }
 section#leaky-data .leaky-info-collection .leaky-item .close-box img{ width: 100%;}
 section#leaky-data .leaky-info-collection .leaky-item .open-box{ display: none; cursor: pointer; position: absolute; z-index: 600; right:4px; bottom: 4px; width: 50px; height: 22px;  }

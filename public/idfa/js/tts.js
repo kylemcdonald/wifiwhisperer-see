@@ -1,3 +1,8 @@
+var loopDelay = 1000;
+var wordDelay = 85;
+var characterDelay = 50;
+
+var running = false;
 var whisperVoice;
 
 window.speechSynthesis.onvoiceschanged = () => {
@@ -15,14 +20,39 @@ function whisper(text, cb) {
 	window.speechSynthesis.speak(msg);
 }
 
-function load() {
+function togglePlay() {
+	if(running) {
+		running = false;
+	} else {
+		running = true;
+		loop();
+	}
+}
+
+function animateText(element, text) {
+	var tokens = text.split(' ');
+	var complete = '';
+	var length = 0;
+	$('#cur-text').text('');
+	tokens.forEach(function (token) {
+		setTimeout(function () {
+			complete += token + ' ';
+			$('#cur-text').text(complete);		
+		}, length+0);
+		length += wordDelay + characterDelay * token.length;
+	})
+}
+
+function loop() {
 	// this will need to be changed from .. to .
 	$.getJSON('../recent.json', (data) => {
-		console.log(data);
-		$('#cur-url').attr('src', data.url);
-		$('#cur-text').text(data.text);
-		whisper(data.text, () => {
-			console.log('done speaking');
-		});
+		if(running) {
+			console.log(data);
+			$('#cur-url').attr('src', data.url);
+			animateText('#cur-text', data.text);
+			whisper(data.text, () => {
+				setTimeout(loop, loopDelay);
+			});
+		}
 	});
 }

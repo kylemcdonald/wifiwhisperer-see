@@ -3,7 +3,7 @@ var http = require('http');
 var express = require('express');
 var app = express();
 
-function getDescription(url, cb) {
+function getDescription(url, cb, err) {
 	var postData = JSON.stringify({
 	 	'url' : url
 	});
@@ -28,12 +28,12 @@ function getDescription(url, cb) {
 				cb(data.description.captions[0].text);
 			});
 		} else {
-			cb();
+			err(res.statusCode);
 		}
 	});
 
 	req.on('error', (e) => {
-		console.log(e.message);
+		err(e.message);
 	});
 
 	req.write(postData);
@@ -49,18 +49,33 @@ app.get('/', (req, res) => {
 });
 
 app.get('/add', (req, res) => {
-	res.end();	
+	res.end();
 	var img = req.query;
+	console.log(req.query);
 	img.timestamp = new Date().getTime();
 	getDescription(img.url, (description) => {
 		img.text = description;
 		recent.push(img);
 		console.log(img);
-	})
+	}, (err) => {
+		console.log('Error: ' + err);
+	});
+});
+
+app.get('/all.json', (req, res) => {
+	res.setHeader('Content-Type', 'application/json');
+	res.json(recent);
 });
 
 app.get('/recent.json', (req, res) => {
 	res.setHeader('Content-Type', 'application/json');
+	if(recent.length < 1) {
+		res.json({
+			text: 'Hillary Clinton in a suit and a tie.',
+			url: 'http://localhost:3000/idfa/img/hillary.jpg'
+		});
+		return;
+	}
 	var sorted = _.sortBy(recent, 'timestamp');
 	var last = sorted[sorted.length - 1];
 	res.json(last);
