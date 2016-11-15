@@ -75,7 +75,7 @@ app.get('/recent.json', (req, res) => {
 	if(recent.length < 1) {
 		res.json({
 			text: 'Hillary Clinton in a suit and a tie.',
-			url: 'http://localhost:3000/idfa/img/hillary.jpg'
+			url: 'img/hillary.jpg'
 		});
 		return;
 	}
