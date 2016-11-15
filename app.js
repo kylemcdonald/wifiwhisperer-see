@@ -8,6 +8,9 @@ function getDescription(url, cb, err) {
 	 	'url' : url
 	});
 
+	cb('This is a fake description.');
+	return;
+
 	var options = {
 		hostname: 'api.projectoxford.ai',
 		port: 80,
@@ -77,7 +80,7 @@ app.get('/recent.json', (req, res) => {
 		return;
 	}
 	var sorted = _.sortBy(recent, 'timestamp');
-	var last = sorted[sorted.length - 1];
+	var last = _.sample(sorted.slice(-5));
 	res.json(last);
 });
 
