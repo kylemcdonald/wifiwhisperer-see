@@ -58,6 +58,14 @@ function loop() {
 	});
 }
 
+// still possible for this to be called twice (race condition)
+setTimeout(function () {
+	if(!running) {
+		running = true;
+		loop();
+	}
+}, 1000);
+
 // function once(func) {
 //     var run = false;
 //     return function() {
