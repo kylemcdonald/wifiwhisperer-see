@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var http = require('http');
+var requestIp = require('request-ip');
 var express = require('express');
 var app = express();
 
@@ -45,10 +46,15 @@ function getDescription(url, cb, err) {
 
 var recent = [];
 
+app.use(requestIp.mw());
+
 app.use('/', express.static('public'));
 
 app.get('/', (req, res) => {
-	res.redirect('/moogfest');
+	res.setHeader('Content-Type', 'text/plain');
+	res.send(req.clientIp);
+	res.end();
+	// res.redirect('/moogfest');
 });
 
 app.get('/add', (req, res) => {

@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.14.0",
     "lodash": "^4.16.6",
-    "mongodb": "^2.2.11"
+    "mongodb": "^2.2.11",
+    "request-ip": "^1.2.3"
   }
 }
