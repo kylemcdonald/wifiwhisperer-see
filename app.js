@@ -51,10 +51,12 @@ app.use(requestIp.mw());
 app.use('/', express.static('public'));
 
 app.get('/', (req, res) => {
-	res.setHeader('Content-Type', 'text/plain');
-	res.send(req.clientIp);
-	res.end();
-	// res.redirect('/moogfest');
+	var idfaIp = '145.102.246.253';
+	if(req.clientIp.indexOf(idfaIp) != -1) {
+		res.redirect('/idfa');
+	} else {
+		res.redirect('/moogfest');
+	}
 });
 
 app.get('/add', (req, res) => {
