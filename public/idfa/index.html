@@ -12,6 +12,7 @@
 <script src="js/lodash.min.js"></script>
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/tts.js"></script>
+<script src="js/runner.js"></script>
 <style>
 body {
     background: black;
@@ -45,13 +46,9 @@ body {
     background: rgba(255,255,255,0.9);
 }
 #img-container {
-
-}
-#cur-url {
-    /* this should be with the 'cover' thing instead to center the image */
-    min-width: 100%;
-    min-height: 100%;
     image-rendering: pixelated;
+    background-size: cover;
+    background-image: url("img/hillary.jpg");
 }
 .fullscreen {
     position: fixed;
@@ -79,7 +76,6 @@ body {
 <body class="noselect fullscreen">
 
 <div id="img-container" class="fullscreen">
-    <img id="cur-url" src="img/hillary.jpg" onclick="togglePlay()"/>
 </div>
 
 <div id="footer">
@@ -89,10 +85,10 @@ body {
 <div id="header">
     <img src="img/wwlogo.svg" id="logo"/>
     <p id="header-text">Wifi Whisperer is tapped into your mobile device...</p>
-    <p id="header-credits">by <a href="https://twitter.com/kcimc">@kcimc</a> + <a href="#" onclick="$('#credits').toggle()">friends</a></p>
+    <p id="header-credits">by <a href="https://twitter.com/kcimc">@kcimc</a> + <a href="#" onclick="toggleCredits()">friends</a></p>
 </div>
 
-<div id="credits"  class="fullscreen" onclick="$(this).hide()">
+<div id="credits"  class="fullscreen" onclick="toggleCredits()">
     <section id="leaky-data">
         <div class="leaky-info-collection main-sizer text-center">
             <div class="leaky-item" style="display: block; visibility: visible; ">

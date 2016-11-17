@@ -9,8 +9,8 @@ function getDescription(url, cb, err) {
 	 	'url' : url
 	});
 
-	cb('This is a fake description.');
-	return;
+	// cb('This is a fake description.');
+	// return;
 
 	var options = {
 		hostname: 'api.projectoxford.ai',
@@ -62,7 +62,7 @@ app.get('/', (req, res) => {
 app.get('/add', (req, res) => {
 	res.end();
 	var img = req.query;
-	console.log(req.query);
+	// console.log(req.query);
 	img.timestamp = new Date().getTime();
 	getDescription(img.url, (description) => {
 		img.text = description;
