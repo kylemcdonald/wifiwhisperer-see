@@ -16,7 +16,7 @@ $.getJSON('data/cache.json', (data) => {
 })
 
 $(document).keypress(function(e) {
-  if(e.key == "0") {
+  if(e.key == "q") {
     toggleCredits();
   }
 });
