@@ -97,16 +97,16 @@ app.get('/add', (req, res) => {
 		var timeSinceDup = img.timestamp - dup.timestamp;
 		if(timeSinceDup < maxTimeSinceDup) {
 			console.log('Ignoring duplicate sniff ' + timeSinceDup + 'ms ago.');
-			return;
 		} else {
 			console.log('Using caption from duplicate sniff ' + timeSinceDup + 'ms ago.');	
 			img.text = dup.text;
 			// add duplicate to the current state, but don't save to the log
-			postcaption.push(img);		
+			postcaption.push(img);
 		}
+		return;
 	}
 	precaption.push(img);
-
+	
 	getDescription(img.url, (description) => {
 		img.text = description;
 		postcaption.push(img);
