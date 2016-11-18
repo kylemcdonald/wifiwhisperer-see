@@ -1,16 +1,35 @@
 var _ = require('lodash');
+var fs = require('fs');
 var http = require('http');
 var requestIp = require('request-ip');
 var express = require('express');
 var app = express();
 
+var maxTimeSinceDup = 10000; // ms
+
+var precaption = [];
+var postcaption = [];
+
+var dbFile = 'data/db.log';
+var rawdb = fs.readFileSync(dbFile, 'utf8');
+rawdb.split(/\r?\n/).forEach((line) => {
+	line = line.replace(/\r?\n/, '');
+	if(line.length > 0) {
+		try {
+			var cur = JSON.parse(line);
+			precaption.push(cur);
+			postcaption.push(cur);
+		} catch (e) {
+			console.log("Error in database: " + line);
+		}
+	}
+})
+console.log("Loaded " + postcaption.length + " records.");
+
 function getDescription(url, cb, err) {
 	var postData = JSON.stringify({
 	 	'url' : url
 	});
-
-	// cb('This is a fake description.');
-	// return;
 
 	var options = {
 		hostname: 'api.projectoxford.ai',
@@ -44,8 +63,6 @@ function getDescription(url, cb, err) {
 	req.end();
 }
 
-var recent = [];
-
 app.use(requestIp.mw());
 
 app.use('/', express.static('public'));
@@ -61,12 +78,40 @@ app.get('/', (req, res) => {
 
 app.get('/add', (req, res) => {
 	res.end();
-	var img = req.query;
-	// console.log(req.query);
-	img.timestamp = new Date().getTime();
+
+	var i = req.url.indexOf('?');
+	var query = req.url.substr(i+1);
+	var parts = query.split('|');
+	var channel = parts[0];
+	var url = parts.slice(1).join('|');
+
+	console.log(query);
+	var img = {
+		timestamp: new Date().getTime(),
+		channel: parseInt(channel),
+		url: url
+	}
+
+	// need to check if the url is already present
+	var dup;
+	if(dup = _.findLast(precaption, {'url': url})) {
+		var timeSinceDup = img.timestamp - dup.timestamp;
+		if(timeSinceDup < maxTimeSinceDup) {
+			console.log('Ignoring duplicate sniff ' + timeSinceDup + 'ms ago.');
+			return;
+		} else {
+			console.log('Using caption from duplicate sniff ' + timeSinceDup + 'ms ago.');	
+			img.text = dup.text;
+			// add duplicate to the current state, but don't save to the log
+			postcaption.push(img);		
+		}
+	}
+	precaption.push(img);
+
 	getDescription(img.url, (description) => {
 		img.text = description;
-		recent.push(img);
+		postcaption.push(img);
+		fs.appendFileSync(dbFile, JSON.stringify(img) + '\n');
 		console.log(img);
 	}, (err) => {
 		console.log('Error: ' + err);
@@ -75,20 +120,17 @@ app.get('/add', (req, res) => {
 
 app.get('/all.json', (req, res) => {
 	res.setHeader('Content-Type', 'application/json');
-	res.json(recent);
+	res.json(postcaption);
 });
 
 app.get('/recent.json', (req, res) => {
 	res.setHeader('Content-Type', 'application/json');
-	if(recent.length < 1) {
-		res.json({
-			text: 'Hillary Clinton in a suit and a tie.',
-			url: 'img/hillary.jpg'
-		});
+	if(postcaption.length < 1) {
+		res.json({});
 		return;
 	}
-	var sorted = _.sortBy(recent, 'timestamp');
-	var last = _.sample(sorted.slice(-5));
+	var sorted = _.sortBy(postcaption, 'timestamp');
+	var last = sorted.slice(-5);
 	res.json(last);
 });
 
