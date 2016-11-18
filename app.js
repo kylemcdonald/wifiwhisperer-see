@@ -10,8 +10,7 @@ var maxTimeSinceDup = 10000; // ms
 var precaption = [];
 var postcaption = [];
 
-var dbFile = 'data/db.log';
-var rawdb = fs.readFileSync(dbFile, 'utf8');
+var rawdb = fs.readFileSync(process.env.DB_FILE, 'utf8');
 rawdb.split(/\r?\n/).forEach((line) => {
 	line = line.replace(/\r?\n/, '');
 	if(line.length > 0) {
@@ -111,7 +110,7 @@ app.get('/add', (req, res) => {
 	getDescription(img.url, (description) => {
 		img.text = description;
 		postcaption.push(img);
-		fs.appendFileSync(dbFile, JSON.stringify(img) + '\n');
+		fs.appendFileSync(process.env.DB_FILE, JSON.stringify(img) + '\n');
 		console.log(img);
 	}, (err) => {
 		console.log('Error: ' + err);
@@ -130,7 +129,7 @@ app.get('/recent.json', (req, res) => {
 		return;
 	}
 	var sorted = _.sortBy(postcaption, 'timestamp');
-	var last = sorted.slice(-5);
+	var last = sorted.slice(-10); // send 10 most recent
 	res.json(last);
 });
 
