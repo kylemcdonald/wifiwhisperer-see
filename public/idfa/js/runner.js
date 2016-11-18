@@ -12,7 +12,7 @@ var oldImages = [];
 var newImages = [];
 
 $.getJSON('data/cache.json', (data) => {
-	newImages = newImages.concat(data);
+	oldImages = oldImages.concat(data);
 })
 
 $(document).keypress(function(e) {
@@ -55,35 +55,43 @@ function limit(arr, n) {
 
 function loop() {
     var loopDelay = _.random(minLoopDelay, maxLoopDelay);
-	// $.getJSON('../recent.json', (data) => {
-	// console.log(data);
-	if(running) {
-		var cur;
-		// if new images are available
-		if(newImages.length > 0) {
-			// sort them by their timestamp
-			newImages = _.sortBy(newImages, 'timestamp');
-			// and pick the most recent, removing it from new images
-			cur = newImages.pop();
-			// and adding it to old images
-			oldImages.push(cur);
-		} else {
-			// otherwise pick an old image at random
-			cur = _.sample(oldImages);
-		}
-		newImages = limit(newImages, maxNewImages);
-		oldImages = limit(oldImages, maxOldImages);
-
-		$('#img-container').css('background-image', 'url(' + cur.url + ')');
-        var text = "I see " + cur.text + ".";
-		animateText('#cur-text', text);
-		whisper(text, () => {
-			setTimeout(loop, loopDelay);
+	$.getJSON('../recent.json', (data) => {
+		var allImages = oldImages.concat(newImages);
+		data.forEach((cur) => {
+			if(!_.find(allImages, {'url': cur.url, 'timestamp': cur.timestamp})) {
+				console.log('Adding to newImages: ' + cur.url + ' at ' + cur.timestamp);
+				newImages.push(cur);
+			}
 		});
-	} else {
-        setTimeout(loop, loopDelay);
-    }
-	// });
+
+		if(running) {
+			var cur;
+			// if new images are available
+			if(newImages.length > 0) {
+				console.log('There are new images!');
+				// sort them by their timestamp
+				newImages = _.sortBy(newImages, 'timestamp');
+				// and pick the most recent, removing it from new images
+				cur = newImages.pop();
+				// and adding it to old images
+				oldImages.push(cur);
+			} else {
+				// otherwise pick an old image at random
+				cur = _.sample(oldImages);
+			}
+			newImages = limit(newImages, maxNewImages);
+			oldImages = limit(oldImages, maxOldImages);
+
+			$('#img-container').css('background-image', 'url(' + cur.url + ')');
+	        var text = "I see " + cur.text + ".";
+			animateText('#cur-text', text);
+			whisper(text, () => {
+				setTimeout(loop, loopDelay);
+			});
+		} else {
+	        setTimeout(loop, loopDelay);
+	    }
+	});
 }
 
 // still possible for this to be called twice (race condition)
