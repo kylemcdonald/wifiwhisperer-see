@@ -53,8 +53,34 @@ function limit(arr, n) {
 	}
 }
 
+function step() {
+	var cur;
+	// if new images are available
+	if(newImages.length > 0) {
+		// sort them by their timestamp
+		newImages = _.sortBy(newImages, 'timestamp');
+		// and pick the most recent, removing it from new images
+		cur = newImages.pop();
+		// and adding it to old images
+		oldImages.push(cur);
+	} else {
+		// otherwise pick an old image at random
+		cur = _.sample(oldImages);
+	}
+	newImages = limit(newImages, maxNewImages);
+	oldImages = limit(oldImages, maxOldImages);
+
+	$('#img-container').css('background-image', 'url(' + cur.url + ')');
+    var text = "I see " + cur.text + ".";
+	animateText('#cur-text', text);
+	whisper(text, () => {
+		// succesfully spoke text, go to next loop
+	    var loopDelay = _.random(minLoopDelay, maxLoopDelay);
+		setTimeout(loop, loopDelay);
+	});
+}
+
 function loop() {
-    var loopDelay = _.random(minLoopDelay, maxLoopDelay);
 	$.getJSON('../recent.json', (data) => {
 		data = _.sortBy(data, 'timestamp');
 
@@ -74,33 +100,15 @@ function loop() {
 			return html;
 		}).join('');
 		$('#header-recent').html(carousel);
-
 		if(running) {
-			var cur;
-			// if new images are available
-			if(newImages.length > 0) {
-				// sort them by their timestamp
-				newImages = _.sortBy(newImages, 'timestamp');
-				// and pick the most recent, removing it from new images
-				cur = newImages.pop();
-				// and adding it to old images
-				oldImages.push(cur);
-			} else {
-				// otherwise pick an old image at random
-				cur = _.sample(oldImages);
-			}
-			newImages = limit(newImages, maxNewImages);
-			oldImages = limit(oldImages, maxOldImages);
-
-			$('#img-container').css('background-image', 'url(' + cur.url + ')');
-	        var text = "I see " + cur.text + ".";
-			animateText('#cur-text', text);
-			whisper(text, () => {
-				setTimeout(loop, loopDelay);
-			});
+			step();
 		} else {
-	        setTimeout(loop, loopDelay);
+			// not running right now, go to next loop
+	        setTimeout(loop, minLoopDelay);
 	    }
+	}).fail(() => {
+		// error getting data, do a step anyway
+		step();
 	});
 }
 
