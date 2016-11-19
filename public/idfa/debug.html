@@ -22,9 +22,20 @@ body {
 	clear: both;
 }
 </style>
-<script src="https://cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.3/jquery.timeago.min.js"></script>
+<script src="//cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.3/jquery.timeago.min.js"></script>
+<script>
+$(document).ready(function () {
+	jQuery("time.timeago").timeago();
+  
+	$(document).keypress(function (e) {
+	  if(e.key == ' ') {
+	  	loadMore();
+	  }
+	});
+});
+</script>
 </head>
 <body>
 <h1>Wifi Whisperer Debug</h1>
@@ -40,16 +51,6 @@ body {
 <div id="images"></div>
 
 <script>
-$(document).ready( () => {
-  jQuery("time.timeago").timeago();
-});
-
-$(document).keypress( e => {
-  if(e.key == ' ') {
-  	loadMore();
-  }
-});
-
 var all;
 var imageStart = 0;
 var loadIncrement = 100;
