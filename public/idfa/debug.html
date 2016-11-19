@@ -1,0 +1,104 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body {
+	font-family: sans-serif;
+	padding: 1em;
+}
+.image {
+	background-size: cover;
+	border: 1px solid gray;
+	width: 192px;
+	height: 192px;
+	margin: 1px;
+	float: left;
+	color: black;
+	font-size: .5em;
+}
+.image > span, time {
+	background-color: rgba(255,255,255,0.75);
+	float: left;
+	clear: both;
+}
+</style>
+<script src="https://cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.3/jquery.timeago.min.js"></script>
+</head>
+<body>
+<h1>Wifi Whisperer Debug</h1>
+
+<h2>Channels</h2>
+<ul id="channels"></ul>
+
+<h2>Hosts</h2>
+<ol id="hosts"></ol>
+
+<h2>Images</h2>
+<p>Press space to load more.</p>
+<div id="images"></div>
+
+<script>
+$(document).ready( () => {
+  jQuery("time.timeago").timeago();
+});
+
+$(document).keypress( e => {
+  if(e.key == ' ') {
+  	loadMore();
+  }
+});
+
+var all;
+var imageStart = 0;
+var loadIncrement = 100;
+
+function loadMore() {
+	var start = imageStart;
+	var end = start + loadIncrement;
+	all.slice(start, end).forEach(img => {
+		var url = new URL(img.url);
+		var hostname = url.hostname;
+		var timestamp = new Date(img.timestamp).toISOString();
+		$('#images').append(
+			'<a href="' + img.url + '"><div class="image" style="background-image:url(\'' + img.url + '\'">' +
+				'<span class="hostname">' + hostname + '</span>' +
+				'<span class="frequency">' + img.channel + ' MHz</span>' +
+				'<time class="timeago" datetime="' + timestamp + '"></time>' + 
+			'</div></a>');
+	});
+	imageStart = end;
+}
+
+$.getJSON('../all.json', data => {
+	all = data;
+
+	// get hostnames
+	all.forEach(img => {
+		img.hostname = new URL(img.url).hostname;
+	})
+
+	// sort by recent at top
+	all = _.orderBy(all, ['timestamp'], ['desc']);
+
+	// log channels
+	channelCounts = _.countBy(all, 'channel');
+	for(channel in channelCounts) {
+		$('#channels').append('<li>' + channel + ' MHz: ' + channelCounts[channel] + '</li>');
+	};
+
+	// log images
+	loadMore();
+
+	// log hostnames
+	var hostnameCounts = _.toPairs(_(all).countBy('hostname').value());
+	hostnameCounts = _.orderBy(hostnameCounts, 1, 'desc');
+	hostnameCounts.slice(0, 10).forEach(item => {
+		$('#hosts').append('<li><a href="http://' + item[0] + '">' + item[0] + '</a> (' + item[1] + ')</li>');
+	});
+})
+</script>
+
+</body>
+</html>
