@@ -27,6 +27,8 @@ body {
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.3/jquery.timeago.min.js"></script>
 <script>
 $(document).ready(function () {
+	console.log('loading timeago and keypress');
+
 	jQuery("time.timeago").timeago();
   
 	$(document).keypress(function (e) {
