@@ -9,8 +9,8 @@ body {
 .image {
 	background-size: cover;
 	border: 1px solid gray;
-	width: 192px;
-	height: 192px;
+	width: 30vh;
+	height: 30vh;
 	margin: 1px;
 	float: left;
 	color: black;
@@ -57,12 +57,10 @@ function loadMore() {
 	var start = imageStart;
 	var end = start + loadIncrement;
 	all.slice(start, end).forEach(img => {
-		var url = new URL(img.url);
-		var hostname = url.hostname;
 		var timestamp = new Date(img.timestamp).toISOString();
 		$('#images').append(
 			'<a href="' + img.url + '"><div class="image" style="background-image:url(\'' + img.url + '\'">' +
-				'<span class="hostname">' + hostname + '</span>' +
+				'<span class="hostname">' + img.hostname + '</span>' +
 				'<span class="frequency">' + img.channel + ' MHz</span>' +
 				'<time class="timeago" datetime="' + timestamp + '"></time>' + 
 			'</div></a>');

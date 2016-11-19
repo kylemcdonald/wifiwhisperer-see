@@ -56,19 +56,29 @@ function limit(arr, n) {
 function loop() {
     var loopDelay = _.random(minLoopDelay, maxLoopDelay);
 	$.getJSON('../recent.json', (data) => {
+		data = _.sortBy(data, 'timestamp');
+
 		var allImages = oldImages.concat(newImages);
 		data.forEach((cur) => {
 			if(!_.find(allImages, {'url': cur.url, 'timestamp': cur.timestamp})) {
-				console.log('Adding to newImages: ' + cur.url + ' at ' + cur.timestamp);
+				// console.log('Adding to newImages: ' + cur.url + ' at ' + cur.timestamp);
 				newImages.push(cur);
 			}
 		});
+
+		var opacity = 0;
+		var total = 10;
+		var carousel = data.reverse().slice(0, total).reverse().map(cur => {
+			opacity += (1. / total);
+			var html = '<div style="opacity: ' + opacity + ';background-image:url(\'' + cur.url + '\')"></div>';
+			return html;
+		}).join('');
+		$('#header-recent').html(carousel);
 
 		if(running) {
 			var cur;
 			// if new images are available
 			if(newImages.length > 0) {
-				console.log('There are new images!');
 				// sort them by their timestamp
 				newImages = _.sortBy(newImages, 'timestamp');
 				// and pick the most recent, removing it from new images
