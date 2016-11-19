@@ -26,9 +26,7 @@ body {
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.3/jquery.timeago.min.js"></script>
 <script>
-$(function () {
-	$("time.timeago").timeago();
-  
+$(function () {  
 	$(document).keypress(function (e) {
 	  if(e.key == ' ') {
 	  	loadMore();
@@ -69,6 +67,7 @@ function loadMore() {
 				'<time class="timeago" datetime="' + timestamp + '"></time>' + 
 			'</div></a>');
 	});
+	$('time.timeago').timeago();
 	imageStart = end;
 }
 
