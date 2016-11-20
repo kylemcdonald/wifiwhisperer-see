@@ -3,20 +3,20 @@ var maxLoopDelay = 1500;
 var wordDelay = 85;
 var characterDelay = 50;
 
-var maxOldImages = 40;
-var maxNewImages = 40; // this should be smaller
+var maxOldImages = 100;
+var maxNewImages = 40;
 
 var running = false;
 
 var oldImages = [];
 var newImages = [];
 
-$.getJSON('data/cache.json', (data) => {
+$.getJSON('../all.json?limit=' + maxOldImages, (data) => {
 	oldImages = oldImages.concat(data);
 })
 
 $(document).keypress(function(e) {
-  if(e.key == "q") {
+  if(e.key == 'q') {
     toggleCredits();
   }
 });
@@ -71,7 +71,7 @@ function step() {
 	oldImages = limit(oldImages, maxOldImages);
 
 	$('#img-container').css('background-image', 'url(' + cur.url + ')');
-    var text = "I see " + cur.text + ".";
+    var text = 'I see ' + cur.text + '.';
 	animateText('#cur-text', text);
 	whisper(text, () => {
 		// succesfully spoke text, go to next loop

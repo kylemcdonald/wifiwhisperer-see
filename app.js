@@ -7,6 +7,10 @@ var app = express();
 
 var maxTimeSinceDup = 10000; // ms
 
+var block = [
+	'10.10.121.254'
+];
+
 var precaption = [];
 var postcaption = [];
 
@@ -47,7 +51,12 @@ function getDescription(url, cb, err) {
 			res.on('data', (chunk) => {
 				var data = JSON.parse(chunk);
 				console.log(data);
-				cb(data.description.captions[0].text);
+				var caption = data.description.captions[0].text;
+				if(typeof caption !== "undefined") {
+					cb(caption);
+				} else {
+					console.log("Caption is undefined.");
+				}
 			});
 		} else {
 			err(res.statusCode);
@@ -63,7 +72,6 @@ function getDescription(url, cb, err) {
 }
 
 app.use(requestIp.mw());
-
 app.use('/', express.static('public'));
 
 app.get('/', (req, res) => {
@@ -89,6 +97,14 @@ app.get('/add', (req, res) => {
 		timestamp: new Date().getTime(),
 		channel: parseInt(channel),
 		url: url
+	}
+
+	for(var i = 0; i < block.length; i++) {
+		var curBlock = block[i];
+		if(url.indexOf(curBlock) > -1) {
+			console.log('Blocked: ' + curBlock);
+			return;
+		}
 	}
 
 	// need to check if the url is already present
@@ -123,13 +139,15 @@ app.get('/all.json', (req, res) => {
 });
 
 app.get('/recent.json', (req, res) => {
+	var limit = req.query.limit || 10;
+
 	res.setHeader('Content-Type', 'application/json');
 	if(postcaption.length < 1) {
 		res.json({});
 		return;
 	}
 	var sorted = _.sortBy(postcaption, 'timestamp');
-	var last = sorted.slice(-10); // send 10 most recent
+	var last = sorted.slice(-limit); // send 10 most recent
 	res.json(last);
 });
 
