@@ -11,15 +11,28 @@ body {
 	border: 1px solid gray;
 	width: 30vh;
 	height: 30vh;
-	margin: 1px;
+	margin: 4px;
+	padding: 2px;
 	float: left;
 	color: black;
-	font-size: .5em;
+	font-size: 1em;
+	overflow: hidden;
+}
+.image > img {
+	width: 100%;
 }
 .image > span, time {
 	background-color: rgba(255,255,255,0.75);
 	float: left;
+	display: inline;
 	clear: both;
+}
+#more {
+	float:left;
+	text-align:center;
+	width:100%;
+	padding:1em;
+	font-size: 2em;
 }
 </style>
 <script src="//cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>
@@ -45,13 +58,13 @@ $(function () {
 <ol id="hosts"></ol>
 
 <h2>Images</h2>
-<p>Press space to load more.</p>
 <div id="images"></div>
+<div onclick="loadMore()" id="more">Click or press space to load more.</div>
 
 <script>
 var all;
 var imageStart = 0;
-var loadIncrement = 100;
+var loadIncrement = 200;
 
 function loadMore() {
 	var start = imageStart;
@@ -59,10 +72,11 @@ function loadMore() {
 	all.slice(start, end).forEach(img => {
 		var timestamp = new Date(img.timestamp).toISOString();
 		$('#images').append(
-			'<a href="' + img.url + '"><div class="image" style="background-image:url(\'' + img.url + '\'">' +
+			'<a href="' + img.url + '"><div class="image">' +
 				'<span class="hostname">' + img.hostname + '</span>' +
 				'<span class="frequency">' + img.channel + ' MHz</span>' +
 				'<time class="timeago" datetime="' + timestamp + '"></time>' + 
+				'<img src="' + img.url + '"/>' +
 			'</div></a>');
 	});
 	$('time.timeago').timeago();
